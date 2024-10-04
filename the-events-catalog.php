@@ -39,3 +39,15 @@ function evcatalog_datepicker_assets()
     wp_enqueue_script('evcatalog-datepicker-js', plugin_dir_url(__FILE__) . 'vendor/air-datepicker.min.js');
 }
 add_action('admin_enqueue_scripts', 'evcatalog_datepicker_assets');
+
+// Подключаем стили для виджета
+function enqueue_event_catalog_widget_styles()
+{
+    $css_path = plugin_dir_url(__FILE__) . 'css/the-events-catalog-widget.css';
+    // Получаем URL к файлу стилей
+    wp_enqueue_style(
+        'event-catalog-widget-styles', // Уникальное имя стилей
+        $css_path // Путь к файлу стилей
+    );
+}
+add_action('wp_enqueue_scripts', 'enqueue_event_catalog_widget_styles');

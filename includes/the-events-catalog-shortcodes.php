@@ -1,51 +1,65 @@
 <?php
-function evcatalog_shortcode($tpc_attr)
+function display_event_by_id_shortcode($atts)
 {
-    $default = array(
-        'category' => 'all'
-    );
-    $cat = shortcode_atts($default, $tpc_attr);
+    // Extract shortcode attributes, default ID to 0
+    $atts = shortcode_atts(array(
+        'id' => 0,
+    ), $atts);
 
-    if ($cat['category'] == 'all') {
-        $args = array(
-            'post_type' => 'evcatalog_product',
-            'post_status' => 'publish', // 'publish' or 'draft' or 'pending' or 'private' or 'trash' or 'any'
-            'orderby' => 'title',
-            'order' => 'ASC', // 'ASC' or 'DESC
-        );
-    } else {
-        $args = array(
-            'post_type' => 'evcatalog_product',
-            'posts_per_page' => -1,
-            'tax_query' => array(
-                array(
-                    'taxonomy' => 'evcatalog_category',
-                    'field' => 'slug',
-                    'terms' => $cat['category']
-                )
-            )
-        );
-    }
-    $text = '<div class="events-catalog">';
-    $loop = new WP_Query($args);
-    if ($loop->have_posts()) {
-        while ($loop->have_posts()) {
-            $loop->the_post();
-            $price = get_post_meta(get_the_ID(), '_evcatalog_meta_price', true);
-            $text .= '<section class="ev-event"><h3>' . get_the_title() . '</h3>';
-            $text .= '<p>' . $price . '</p>';
-            $text .= get_the_post_thumbnail();
-            $text .= '<p>' . get_the_content() . '</p></section>';
-        }
-    } else {
-        $text .= '<p>Ei tuotteita</p>';
+    $event_id = intval($atts['id']);
+
+    // Check if the ID is valid
+    if ($event_id <= 0) {
+        return 'Invalid event ID.';
     }
 
-    $text .= '</div>';
+    // Fetch the event post
+    $event = get_post($event_id);
 
-    wp_reset_postdata();
+    // Check if the post exists and is of the correct type
+    if (! $event || $event->post_type !== 'evcatalog_event') {
+        return 'Event not found.';
+    }
 
-    return $text;
+    // Fetch meta fields
+    $event_date = get_post_meta($event_id, '_evcatalog_meta_start_datetime', true);
+    $event_location = get_post_meta($event_id, '_evcatalog_meta_place', true);
+    $event_link = get_post_meta($event_id, '_evcatalog_meta_link', true);
+
+    // Prepare variables
+    $event_title = $event->post_title;
+    $event_permalink = get_permalink($event_id);
+    $event_thumbnail = get_the_post_thumbnail_url($event_id, 'large');
+
+    // Fallback for missing thumbnail
+    if (! $event_thumbnail) {
+        $event_thumbnail = 'https://via.placeholder.com/300x168'; // Default placeholder image if none available
+    }
+
+    // Start output buffering to capture the template output
+    ob_start();
+
+    // Устанавливаем данные, чтобы их можно было использовать в шаблоне
+    set_query_var('event_title', $event_title);
+    set_query_var('event_date', $event_date);
+    set_query_var('event_location', $event_location);
+    set_query_var('event_link', $event_link);
+    set_query_var('event_thumbnail', $event_thumbnail);
+    set_query_var('event_permalink', $event_permalink);
+
+    // Path to the template file in the plugin folder
+    $template_path = plugin_dir_path(__FILE__) . 'the-events-catalog-random-event.php';
+
+    // Check if the template file exists and include it
+    if (file_exists($template_path)) {
+        include $template_path;
+    } else {
+        echo 'Template not found.';
+    }
+
+    // Capture the output and return it
+    return ob_get_clean();
 }
 
-add_shortcode('events-catalog', 'evcatalog_shortcode');
+// Register the shortcode
+add_shortcode('the-event', 'display_event_by_id_shortcode');

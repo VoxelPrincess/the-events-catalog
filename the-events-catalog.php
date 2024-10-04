@@ -40,14 +40,14 @@ function evcatalog_datepicker_assets()
 }
 add_action('admin_enqueue_scripts', 'evcatalog_datepicker_assets');
 
-// Подключаем стили для виджета
+// Connecting styles for the widget
 function enqueue_event_catalog_widget_styles()
 {
     $css_path = plugin_dir_url(__FILE__) . 'css/the-events-catalog-widget.css';
-    // Получаем URL к файлу стилей
+    // Get URL to style file
     wp_enqueue_style(
-        'event-catalog-widget-styles', // Уникальное имя стилей
-        $css_path // Путь к файлу стилей
+        'event-catalog-widget-styles', // Unique style name
+        $css_path // Path to style file
     );
 }
 add_action('wp_enqueue_scripts', 'enqueue_event_catalog_widget_styles');

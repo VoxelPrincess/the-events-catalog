@@ -12,9 +12,9 @@ function evcatalog_register_post_type()
         'edit_item' => 'Edit item',
         'new_item' => 'New item',
         'view_item' => 'Browse item',
-        'search_items' => 'Search for products',
+        'search_items' => 'Search for events',
         'not_found' => 'No events found',
-        'not_found_in_trash' => 'Products were not found in the trash'
+        'not_found_in_trash' => 'Events were not found in the trash'
     );
 
 

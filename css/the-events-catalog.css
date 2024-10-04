@@ -1,0 +1,35 @@
+.events-catalog,
+.events-catalog * {
+  box-sizing: border-box;
+}
+
+.events-catalog {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding-top: 20px;
+}
+
+.events-catalog .ev-event {
+  border: 2px solid #f2f2f2;
+  padding: 10px;
+  width: 32%;
+  margin-bottom: 10px;
+}
+
+.wp-widget-evcatalog .ev-event {
+  border: 2px solid #f2f2f2;
+  padding: 10px;
+}
+
+.events-catalog .ev-event h3,
+.wp-widget-evcatalog .ev-event h3 {
+  margin-top: 0;
+}
+
+.events-catalog .ev-event img,
+.wp-widget-evcatalog .ev-event img {
+  max-width: 100%;
+  height: auto;
+}
